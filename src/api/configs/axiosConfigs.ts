@@ -1,21 +1,25 @@
-import axios, { AxiosError } from "axios"
+import axios, { AxiosError } from "axios";
+import { useNavigate } from "react-router-dom";
 
 const api = axios.create({
     withCredentials: true,
-    baseURL: "http://localhost:3000/api/v1"
-})
+    baseURL: import.meta.env.VITE_BACKEND_URL,
+});
 
 const errorHandler = (error: AxiosError) => {
-    const statusCode = error.response?.status
+    const statusCode = error.response?.status;
+    const navigate = useNavigate();
 
-    if (statusCode && statusCode !== 401) {
-        // console.log(error)
+    if(statusCode && statusCode === 401 ) {
+        navigate("/login");
     }
-    return Promise.reject(error)
+    else {
+        return Promise.reject(error);
+    }
 }
 
 api.interceptors.response.use(undefined, (error) => {
-    return errorHandler(error)
+    return errorHandler(error);
 })
 
-export default api
+export default api;
